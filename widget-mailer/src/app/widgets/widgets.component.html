@@ -1,30 +1,29 @@
-<!-- <div class="chart-container" *ngIf="isHighcharts">
-    <div id="container" class="scrollable-container">
-        <highcharts-chart [Highcharts]="Highcharts" [options]="pieChart" style="width: 600px; height: 600px; display: block;"></highcharts-chart>    
-    </div>
-    <div id="container" class="scrollable-container">
-        <highcharts-chart [Highcharts]="Highcharts" [options]="barChart1" style="width: 600px; height: 600px; display: block;"></highcharts-chart>    
-    </div>
-    <div id="container" class="scrollable-container">
-        <highcharts-chart [Highcharts]="Highcharts" [options]="barChart2" style="width: 600px; height: 600px; display: block;"></highcharts-chart>    
-    </div>
-</div>
--->
-
-
-
 <div class="chart-container" *ngIf="isHighcharts">
-
-    <div id="container" #chartContainer1>
-        <highcharts-chart class="highcharts-chart" [Highcharts]="Highcharts" [options]="pieChart"></highcharts-chart>
+    <!-- <div id="container" class="scrollable-container">
+        <highcharts-chart [Highcharts]="Highcharts" [options]="pieChart"></highcharts-chart>    
     </div>
-
-    <div id="container" #chartContainer2>
-        <highcharts-chart  class="highcharts-chart" [Highcharts]="Highcharts" [options]="barChart1"></highcharts-chart>
-    </div>
-
-    <div id="container" #chartContainer3>
-        <highcharts-chart #barContainer class="highcharts-chart" [Highcharts]="Highcharts" [options]="barChart2"></highcharts-chart>
+    <div id="container" class="scrollable-container">
+        <highcharts-chart [Highcharts]="Highcharts" [options]="barChart1"></highcharts-chart>    
+    </div> -->
+    <div id="container" class="scrollable-container">
+        <highcharts-chart [Highcharts]="Highcharts" [options]="barChart2"></highcharts-chart>    
     </div>
 </div>
-<button (click)="sendEmail()">Send Email</button> 
+<button (click)="sendEmail()">Send Email</button>
+
+<!-- <div class="chart-container" *ngIf="isHighcharts">
+
+    <div id="container">
+        <highcharts-chart #chartContainer1 class="highcharts-chart" [Highcharts]="Highcharts" [options]="pieChart"></highcharts-chart>
+    </div>
+
+    <div id="container" >
+        <highcharts-chart #chartContainer2 class="highcharts-chart" [Highcharts]="Highcharts" [options]="barChart1"></highcharts-chart>
+    </div>
+
+    <div id="container">
+        <highcharts-chart #chartContainer3 class="highcharts-chart" [Highcharts]="Highcharts"
+            [options]="barChart2"></highcharts-chart>
+    </div>
+</div> -->
+<!-- <button (click)="sendEmail()">Send Email</button> -->
