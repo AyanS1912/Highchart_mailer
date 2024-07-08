@@ -1,29 +1,12 @@
 <div class="chart-container" *ngIf="isHighcharts">
-    <!-- <div id="container" class="scrollable-container">
+    <div id="piecontainer" class="scrollable-container">
         <highcharts-chart [Highcharts]="Highcharts" [options]="pieChart"></highcharts-chart>    
     </div>
-    <div id="container" class="scrollable-container">
+    <div id="barcontainer1" class="scrollable-container">
         <highcharts-chart [Highcharts]="Highcharts" [options]="barChart1"></highcharts-chart>    
-    </div> -->
-    <div id="container" class="scrollable-container">
+    </div>
+    <div id="barcontainer2" class="scrollable-container">
         <highcharts-chart [Highcharts]="Highcharts" [options]="barChart2"></highcharts-chart>    
     </div>
 </div>
 <button (click)="sendEmail()">Send Email</button>
-
-<!-- <div class="chart-container" *ngIf="isHighcharts">
-
-    <div id="container">
-        <highcharts-chart #chartContainer1 class="highcharts-chart" [Highcharts]="Highcharts" [options]="pieChart"></highcharts-chart>
-    </div>
-
-    <div id="container" >
-        <highcharts-chart #chartContainer2 class="highcharts-chart" [Highcharts]="Highcharts" [options]="barChart1"></highcharts-chart>
-    </div>
-
-    <div id="container">
-        <highcharts-chart #chartContainer3 class="highcharts-chart" [Highcharts]="Highcharts"
-            [options]="barChart2"></highcharts-chart>
-    </div>
-</div> -->
-<!-- <button (click)="sendEmail()">Send Email</button> -->

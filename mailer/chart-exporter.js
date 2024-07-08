@@ -113,18 +113,23 @@ app.use(bodyParser.json({ limit: "50mb" }));
 
 app.post("/send-email", async(req, res) => {
   try{
-    const browser = await puppeteer.launch()
+    const browser = await puppeteer.launch({headless:false})
     const page = await browser.newPage()
 
-    await page.goto('http://localhost:4200');
+    await page.setViewport({width: 1280, height: 720 })
 
-    const chartContainers = await page.$$('#container');
+    await page.goto('http://localhost:4200'/*,{waitUntil : "networkidle2"}*/);
+    
+    await page.waitForSelector("highcharts-chart");
+
+    const chartSelectors = ['#piecontainer', '#barcontainer1', '#barcontainer2'];
 
     const getScreenshots = []
 
-    for (let i = 0; i < chartContainers.length; i++) {
-      const chart = chartContainers[i];
-      const screenshot = await chart.screenshot({ encoding: 'base64' });
+    for (const selector of chartSelectors) {
+      const targetElement = await page.$(selector);
+      await targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      const screenshot = await targetElement.screenshot({ encoding: 'base64' });
       getScreenshots.push(`data:image/png;base64,${screenshot}`);
     }
 
@@ -180,9 +185,7 @@ app.post("/send-email", async(req, res) => {
         <body>
         <div class="flex-container">`;
   
-  console.log("SCe=reen",getScreenshots)
   let attachments = getScreenshots.map((image, index) => {
-    console.log(image)
     const imageBuffer = Buffer.from(image.split(",")[1], "base64");
     htmlContent += `
       <div class="scroll-container">
@@ -200,8 +203,6 @@ app.post("/send-email", async(req, res) => {
     </body>
   </html>`;
 
-  console.log("htmlContent", htmlContent);
-
   let transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -217,7 +218,6 @@ app.post("/send-email", async(req, res) => {
     html: htmlContent,
     attachments: attachments,
   };
-  console.log(mailOptions)
 
   transporter.sendMail(mailOptions, (err, info) => {
     if (err) {
