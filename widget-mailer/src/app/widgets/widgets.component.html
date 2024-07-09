@@ -1,5 +1,7 @@
-<div class="chart-container" *ngIf="isHighcharts">
-    <div id="piecontainer" class="scrollable-container">
+<div *ngIf="(isLoading$ | async)===false">
+
+    <div class="chart-container" *ngIf="isHighcharts">
+        <div id="piecontainer" class="scrollable-container">
         <highcharts-chart [Highcharts]="Highcharts" [options]="pieChart"></highcharts-chart>    
     </div>
     <div id="barcontainer1" class="scrollable-container">
@@ -10,3 +12,5 @@
     </div>
 </div>
 <button (click)="sendEmail()">Send Email</button>
+
+</div>
