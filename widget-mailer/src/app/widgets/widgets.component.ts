@@ -25,6 +25,11 @@ export class WidgetsComponent implements OnInit,OnChanges{
 
   isLoading$:BehaviorSubject<boolean> = new BehaviorSubject(false)
   isHighcharts: boolean = false;
+
+  originalPieChart: Highcharts.Options = {};
+  originalBarChart1: Highcharts.Options = {};
+  originalBarChart2: Highcharts.Options = {};
+
   pieChart : Highcharts.Options= {
     chart: {
       type: "pie",
@@ -266,7 +271,10 @@ export class WidgetsComponent implements OnInit,OnChanges{
   };
 
   ngOnInit(): void {
-    this.isHighcharts = typeof Highcharts === "object";    
+    this.isHighcharts = typeof Highcharts === "object";
+    this.originalPieChart = JSON.parse(JSON.stringify(this.pieChart));
+    this.originalBarChart1 = JSON.parse(JSON.stringify(this.barChart1));
+    this.originalBarChart2 = JSON.parse(JSON.stringify(this.barChart2));   
   }
 
   Highcharts: typeof Highcharts = Highcharts;
@@ -324,57 +332,47 @@ export class WidgetsComponent implements OnInit,OnChanges{
 
   //Temporary chnage in chartValues for during sending the mail
   sendEmail() {
-    let imagePromises:any;
-    const originalChartSettings = this.adjustChartOptions();
+    this.adjustChartOptions();
     this.isLoading$.next(false)
     const chartContainers = ['#piecontainer', '#barcontainer1', '#barcontainer2'];
     setTimeout(() => {
       const chartContainers = ['piecontainer', 'barcontainer1', 'barcontainer2'];
       const imagePromises = chartContainers.map(selector => {
         const element = document.getElementById(selector);
-        return html2canvas(element as HTMLElement).then(canvas => {
-          return canvas.toDataURL('image/png');
-        });
+        if (element) {
+          element.scrollIntoView();
+          return html2canvas(element as HTMLElement, { logging: true, useCORS: true }).then(canvas => {
+            return canvas.toDataURL('image/png');
+          });
+        }
+        return Promise.reject('No element found');
       });
 
       Promise.all(imagePromises).then(images => {
         axios.post('http://localhost:3000/send-email', { images: images })
           .then(response => {
             console.log('Email sent successfully');
-            this.isLoading$.next(true);
-            this.resetChartOptions(originalChartSettings);
-            this.isLoading$.next(false);
           })
           .catch(error => {
             console.error('Error sending email:', error);
-            this.isLoading$.next(true);
-            this.resetChartOptions(originalChartSettings);
-            this.isLoading$.next(false);
           });
       }).catch(error => {
         console.error('Error capturing screenshots:', error);
-        this.isLoading$.next(true);
-        this.resetChartOptions(originalChartSettings);
-        this.isLoading$.next(false);
-      });
-    }, 2000); // Ensure charts are rendered
+      }).finally(()=>{
+        this.resetChartOptions();
+        this.cdr.detectChanges()
+      })
+    }, 1500);
   }
 
   adjustChartOptions(): any {
-    this.isLoading$.next(true)
-    const originalSettings = {
-      pieChart: { ...this.pieChart },
-      barChart1: { ...this.barChart1 },
-      barChart2: { ...this.barChart2 },
-    };
-
+  
     this.pieChart.chart = { ...this.pieChart.chart };
 
     this.barChart1 = this.adjustBarChartOptions({ ...this.barChart1});
     this.barChart2 = this.adjustBarChartOptions({ ...this.barChart2});
-
+    this.isLoading$.next(true)
     this.cdr.detectChanges();
-    return originalSettings;
   }
 
   adjustBarChartOptions(chartOptions: Highcharts.Options) {
@@ -400,7 +398,7 @@ export class WidgetsComponent implements OnInit,OnChanges{
           const numCategories = chart.series[0].data.length;
           // Set the max dynamically based on number of categories
           if (numCategories > 5) {
-            chart.xAxis[0].setExtremes(0, maxDatalen);
+            chart.xAxis[0].setExtremes(0, maxDatalen-1);
             chart.xAxis[0].update({
               scrollbar: {
                 enabled: true,  
@@ -420,10 +418,15 @@ export class WidgetsComponent implements OnInit,OnChanges{
     return chartOptions
   }
 
-  resetChartOptions(originalSettings: any) {
-    this.pieChart = { ...originalSettings.pieChart };
-    this.barChart1 = { ...originalSettings.barChart1 };
-    this.barChart2 = { ...originalSettings.barChart2 };
+  resetChartOptions() {
+    this.isLoading$.next(true);
+    this.cdr.detectChanges();
+    this.pieChart = JSON.parse(JSON.stringify(this.originalPieChart));
+    this.barChart1 = JSON.parse(JSON.stringify(this.originalBarChart1));
+    this.barChart2 = JSON.parse(JSON.stringify(this.originalBarChart2));
+    this.isLoading$.next(false);
   }
+
+
 
 }

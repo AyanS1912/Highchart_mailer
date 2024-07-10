@@ -26,7 +26,9 @@ app.post("/send-email", (req, res) => {
               display: flex;
               flex-wrap: wrap;
               justify-content: center;
+              align-items: center;
               width: 100vw;
+              padding: 10px;
               position : fixed;
             }
 
